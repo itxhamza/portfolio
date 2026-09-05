@@ -1,0 +1,183 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+import Icon from "@/components/Icon.astro";
+import MotionButton from "@/components/react/MotionButton.tsx";
+import MotionCard from "@/components/react/MotionCard.tsx";
+import StatCounter from "@/components/react/StatCounter.tsx";
+import { site } from "@/data/site";
+import { featuredProjects } from "@/data/projects";
+import { stats, values } from "@/data/about";
+import { withBase } from "@/lib/url";
+
+const marquee = [
+  "TypeScript", "React", "Next.js", "Astro", "Node.js", "Tailwind CSS",
+  "PostgreSQL", "GraphQL", "Docker", "AWS", "Vue", "Playwright",
+];
+const valueIcons = ["gauge", "a11y", "sparkles"];
+---
+<BaseLayout>
+  <!-- ================= HERO ================= -->
+  <section class="relative overflow-hidden">
+    <div class="container-page pb-16 pt-10 sm:pt-16" data-hero>
+      <div class="mx-auto max-w-3xl text-center">
+        <div
+          class="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-4 py-1.5 font-mono text-xs text-muted-foreground backdrop-blur"
+          data-hero-item
+        >
+          <span class="inline-block h-2 w-2 rounded-full bg-accent animate-pulse-dot"></span>
+          {site.status}
+        </div>
+
+        <h1
+          class="mt-6 text-4xl font-extrabold leading-[1.05] sm:text-6xl md:text-7xl"
+          data-hero-item
+        >
+          <span class="gradient-text">{site.name}</span>
+          <br />
+          <span class="text-foreground/90">{site.role}</span>
+        </h1>
+
+        <p
+          class="mx-auto mt-6 max-w-xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg"
+          data-hero-item
+        >
+          {site.tagline} I turn ideas into polished, production-ready web
+          experiences — fast, accessible, and built to last.
+        </p>
+
+        <div
+          class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
+          data-hero-item
+        >
+          <MotionButton href={withBase("/projects")} label="View my work" variant="primary" full client:load />
+          <MotionButton href={withBase("/contact")} label="Get in touch" variant="ghost" full client:load />
+        </div>
+
+        <div
+          class="mt-6 flex items-center justify-center gap-2 font-mono text-xs text-muted-foreground"
+          data-hero-item
+        >
+          <Icon name="map-pin" size={14} />
+          {site.location}
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech marquee -->
+    <div class="relative flex overflow-hidden border-y border-border/60 bg-card/30 py-4">
+      <div class="flex shrink-0 animate-marquee items-center gap-8 pr-8">
+        {marquee.map((t) => (
+          <span class="flex items-center gap-8 font-mono text-sm text-muted-foreground">
+            {t}
+            <span class="h-1 w-1 rounded-full bg-accent/60"></span>
+          </span>
+        ))}
+      </div>
+      <div class="flex shrink-0 animate-marquee items-center gap-8 pr-8" aria-hidden="true">
+        {marquee.map((t) => (
+          <span class="flex items-center gap-8 font-mono text-sm text-muted-foreground">
+            {t}
+            <span class="h-1 w-1 rounded-full bg-accent/60"></span>
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FEATURED WORK ================= -->
+  <section class="container-page py-20">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <SectionHeading eyebrow="Selected work" title="Featured projects">
+        <p class="max-w-md text-sm leading-relaxed text-muted-foreground">
+          A few things I've designed and shipped recently.
+        </p>
+      </SectionHeading>
+      <a
+        href={withBase("/projects")}
+        class="link-underline hidden items-center gap-1.5 font-mono text-sm text-foreground sm:inline-flex"
+        data-reveal
+      >
+        All projects
+        <Icon name="arrow-right" size={16} />
+      </a>
+    </div>
+
+    <div class="mt-10 grid gap-6">
+      <div data-reveal>
+        <MotionCard className="h-full" client:visible>
+          <ProjectCard project={featuredProjects[0]} featured />
+        </MotionCard>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+        {
+          featuredProjects.slice(1, 3).map((p) => (
+            <div data-reveal class="h-full">
+              <MotionCard className="h-full" client:visible>
+                <ProjectCard project={p} />
+              </MotionCard>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VALUES / ABOUT TEASER ================= -->
+  <section class="container-page py-8">
+    <div class="rounded-3xl border border-border/70 bg-card/40 p-8 sm:p-12">
+      <SectionHeading eyebrow="How I work" title="Craft over shortcuts" align="center">
+        <p class="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground">
+          Principles that shape everything I build.
+        </p>
+      </SectionHeading>
+
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        {
+          values.map((v, i) => (
+            <div data-reveal class="h-full">
+              <MotionCard className="h-full" lift={5} client:visible>
+                <div class="h-full rounded-2xl border border-border/60 bg-background/50 p-6 transition-colors hover:border-border-strong">
+                  <div class="grid h-11 w-11 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <Icon name={valueIcons[i] ?? "bolt"} />
+                  </div>
+                  <h3 class="mt-5 text-lg font-bold">{v.title}</h3>
+                  <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{v.body}</p>
+                </div>
+              </MotionCard>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="mt-10 grid grid-cols-2 gap-6 border-t border-border/60 pt-8 sm:grid-cols-4">
+        {
+          stats.map((s) => (
+            <div data-reveal>
+              <StatCounter value={s.value} label={s.label} client:visible />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="container-page py-20">
+    <div
+      class="relative overflow-hidden rounded-3xl border border-accent/30 bg-gradient-to-br from-card to-background p-10 text-center sm:p-16"
+      data-reveal
+    >
+      <div class="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-accent/20 blur-3xl animate-float"></div>
+      <h2 class="relative text-3xl font-bold sm:text-4xl">Have a project in mind?</h2>
+      <p class="relative mx-auto mt-4 max-w-md text-muted-foreground">
+        I'm currently available for freelance work and collaborations. Let's
+        build something great together.
+      </p>
+      <div class="relative mt-8 flex justify-center">
+        <MotionButton href={withBase("/contact")} label="Start a conversation" client:visible />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,151 @@
+---
+import { site, nav } from "@/data/site";
+import Icon from "@/components/Icon.astro";
+import MotionButton from "@/components/react/MotionButton.tsx";
+import { withBase, isActive } from "@/lib/url";
+const path = Astro.url.pathname;
+---
+<header
+  class="fixed inset-x-0 top-0 z-50 transition-colors duration-300"
+  data-header
+>
+  <div class="container-page">
+    <nav
+      class="mt-3 flex items-center justify-between rounded-2xl border border-border/70 bg-card/60 px-3 py-2.5 backdrop-blur-xl transition-all duration-300 sm:px-4"
+      aria-label="Primary"
+    >
+      <a
+        href={withBase("/")}
+        class="group flex items-center gap-2.5 rounded-lg px-1.5 py-1 font-mono text-sm font-semibold tracking-tight"
+      >
+        <span
+          class="grid h-8 w-8 place-items-center rounded-lg bg-accent font-bold text-accent-foreground transition-transform duration-300 group-hover:-rotate-6"
+        >
+          {site.initials}
+        </span>
+        <span class="hidden sm:inline">{site.name}</span>
+      </a>
+
+      <ul class="hidden items-center gap-1 md:flex">
+        {
+          nav.map((item) => {
+            const active = isActive(path, item.href);
+            return (
+              <li>
+                <a
+                  href={withBase(item.href)}
+                  aria-current={active ? "page" : undefined}
+                  class:list={[
+                    "relative rounded-lg px-3 py-2 font-mono text-sm transition-colors duration-200 hover:text-foreground",
+                    active ? "text-foreground" : "text-muted-foreground",
+                  ]}
+                >
+                  {active && <span class="absolute inset-0 -z-10 rounded-lg bg-muted/70" />}
+                  {item.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:block">
+          <MotionButton
+            href={withBase("/contact")}
+            label="Let's talk"
+            client:load
+          />
+        </div>
+
+        <button
+          type="button"
+          class="grid h-10 w-10 place-items-center rounded-lg border border-border/70 text-muted-foreground transition-colors hover:text-foreground md:hidden"
+          aria-label="Open menu"
+          aria-expanded="false"
+          data-menu-toggle
+        >
+          <Icon name="menu" data-menu-open />
+          <Icon name="close" class="hidden" data-menu-close />
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div
+      class="mt-2 hidden overflow-hidden rounded-2xl border border-border/70 bg-card/90 backdrop-blur-xl md:hidden"
+      data-mobile-menu
+    >
+      <ul class="flex flex-col p-2">
+        {
+          nav.map((item) => {
+            const active = isActive(path, item.href);
+            return (
+              <li>
+                <a
+                  href={withBase(item.href)}
+                  aria-current={active ? "page" : undefined}
+                  class:list={[
+                    "block rounded-lg px-3 py-3 font-mono text-sm transition-colors",
+                    active
+                      ? "bg-muted/70 text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
+                  ]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            );
+          })
+        }
+        <li class="p-1">
+          <a
+            href={withBase("/contact")}
+            class="flex items-center justify-center gap-1.5 rounded-lg bg-accent px-3.5 py-3 font-mono text-sm font-semibold text-accent-foreground"
+          >
+            Let's talk
+            <Icon name="arrow-right" size={16} />
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    const header = document.querySelector<HTMLElement>("[data-header]");
+    const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+    const menu = document.querySelector<HTMLElement>("[data-mobile-menu]");
+    const openIcon = document.querySelector<SVGElement>("[data-menu-open]");
+    const closeIcon = document.querySelector<SVGElement>("[data-menu-close]");
+
+    const onScroll = () => {
+      if (!header) return;
+      header.classList.toggle("is-scrolled", window.scrollY > 12);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    if (toggle && menu) {
+      toggle.addEventListener("click", () => {
+        const open = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", String(!open));
+        toggle.setAttribute("aria-label", open ? "Open menu" : "Close menu");
+        menu.classList.toggle("hidden", open);
+        openIcon?.classList.toggle("hidden", !open);
+        closeIcon?.classList.toggle("hidden", open);
+      });
+    }
+  }
+
+  initHeader();
+  document.addEventListener("astro:after-swap", initHeader);
+</script>
+
+<style>
+  [data-header].is-scrolled nav {
+    border-color: var(--color-border-strong);
+    box-shadow: 0 12px 40px -20px rgba(0, 0, 0, 0.8);
+  }
+</style>
