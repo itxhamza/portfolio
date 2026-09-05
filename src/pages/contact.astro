@@ -1,0 +1,187 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import Icon from "@/components/Icon.astro";
+import MotionCard from "@/components/react/MotionCard.tsx";
+import MotionSubmit from "@/components/react/MotionSubmit.tsx";
+import { site, socials } from "@/data/site";
+
+const iconFor: Record<string, string> = {
+  GitHub: "github",
+  LinkedIn: "linkedin",
+  Email: "mail",
+};
+---
+<BaseLayout
+  title="Contact"
+  description={`Get in touch with ${site.name} for freelance work, collaborations, or just to say hi.`}
+>
+  <section class="container-page">
+    <div class="grid gap-12 md:grid-cols-[1fr_1fr] md:gap-16">
+      <!-- Left: intro + channels -->
+      <div>
+        <SectionHeading eyebrow="Contact" title="Let's build something">
+          <p class="max-w-md text-base leading-relaxed text-muted-foreground">
+            Have a project, a role, or an idea you'd like to talk through? Drop
+            me a line — I read every message and usually reply within a day.
+          </p>
+        </SectionHeading>
+
+        <div class="mt-8 space-y-3">
+          {
+            socials.map((s) => (
+              <div data-reveal>
+                <MotionCard lift={4} client:visible>
+                  <a
+                    href={s.href}
+                    {...s.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {}}
+                    class="group flex items-center gap-4 rounded-2xl border border-border/70 bg-card/40 p-4 transition-colors hover:border-border-strong hover:bg-card"
+                  >
+                    <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
+                      <Icon name={iconFor[s.label] ?? "arrow-up-right"} />
+                    </span>
+                    <span class="min-w-0">
+                      <span class="block font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                        {s.label}
+                      </span>
+                      <span class="block truncate text-sm text-foreground">{s.handle}</span>
+                    </span>
+                    <Icon name="arrow-up-right" size={18} class="ml-auto text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
+                  </a>
+                </MotionCard>
+              </div>
+            ))
+          }
+        </div>
+
+        <div
+          class="mt-6 flex items-center gap-3 rounded-2xl border border-accent/30 bg-accent/5 p-4"
+          data-reveal
+        >
+          <span class="inline-block h-2.5 w-2.5 rounded-full bg-accent animate-pulse-dot"></span>
+          <p class="font-mono text-sm text-foreground/90">{site.status}</p>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div
+        class="rounded-3xl border border-border/70 bg-card/40 p-6 sm:p-8"
+        data-reveal
+        style="--reveal-delay:120ms"
+      >
+        <form data-contact-form class="space-y-5" novalidate>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div class="space-y-2">
+              <label for="name" class="block font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                autocomplete="name"
+                placeholder="Ada Lovelace"
+                class="w-full rounded-xl border border-border/70 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-accent"
+              />
+            </div>
+            <div class="space-y-2">
+              <label for="email" class="block font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="you@company.com"
+                class="w-full rounded-xl border border-border/70 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-accent"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label for="subject" class="block font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              Subject
+            </label>
+            <input
+              id="subject"
+              name="subject"
+              type="text"
+              placeholder="Project inquiry"
+              class="w-full rounded-xl border border-border/70 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-accent"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label for="message" class="block font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="5"
+              required
+              placeholder="Tell me a bit about what you're building…"
+              class="w-full resize-y rounded-xl border border-border/70 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-accent"
+            ></textarea>
+          </div>
+
+          <MotionSubmit label="Send message" client:visible />
+
+          <p
+            class="hidden items-center gap-2 rounded-xl border border-accent/30 bg-accent/5 px-4 py-3 text-sm text-foreground"
+            data-form-note
+            role="status"
+          >
+            <Icon name="check" size={16} class="text-accent" />
+            <span></span>
+          </p>
+
+          <p class="text-center font-mono text-xs text-muted-foreground">
+            Prefer email? Reach me directly at
+            <a href={`mailto:${site.email}`} class="link-underline text-foreground">{site.email}</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline define:vars={{ email: site.email }}>
+  function initContactForm() {
+    const form = document.querySelector("[data-contact-form]");
+    if (!form) return;
+    const note = form.querySelector("[data-form-note]");
+    const noteText = note?.querySelector("span");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const data = new FormData(form);
+      const name = String(data.get("name") || "");
+      const from = String(data.get("email") || "");
+      const subject = String(data.get("subject") || "Portfolio inquiry");
+      const message = String(data.get("message") || "");
+
+      const body = `Hi,%0D%0A%0D%0A${encodeURIComponent(message)}%0D%0A%0D%0A— ${encodeURIComponent(name)} (${encodeURIComponent(from)})`;
+      const href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${body}`;
+
+      window.location.href = href;
+
+      if (note && noteText) {
+        noteText.textContent =
+          "Opening your email app… if nothing happens, email me directly at " + email;
+        note.classList.remove("hidden");
+        note.classList.add("flex");
+      }
+    });
+  }
+
+  initContactForm();
+  document.addEventListener("astro:after-swap", initContactForm);
+</script>

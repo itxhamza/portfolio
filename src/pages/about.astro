@@ -1,0 +1,136 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import Icon from "@/components/Icon.astro";
+import MotionButton from "@/components/react/MotionButton.tsx";
+import MotionCard from "@/components/react/MotionCard.tsx";
+import StatCounter from "@/components/react/StatCounter.tsx";
+import { site } from "@/data/site";
+import { skills, timeline, stats } from "@/data/about";
+import { withBase } from "@/lib/url";
+---
+<BaseLayout
+  title="About"
+  description={`About ${site.name} — ${site.role}. Background, skills, and experience.`}
+>
+  <!-- Intro -->
+  <section class="container-page">
+    <div class="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-center">
+      <div>
+        <SectionHeading eyebrow="About me" title="Developer, designer, problem-solver">
+          <div class="mt-2 space-y-4 text-base leading-relaxed text-muted-foreground">
+            <p>
+              I'm {site.name}, a {site.role.toLowerCase()} with 6+ years turning
+              complex problems into clean, usable products. I care deeply about
+              the details most people never notice — the ones that make software
+              feel effortless.
+            </p>
+            <p>
+              My sweet spot is the space between design and engineering: building
+              interfaces that look sharp, respond instantly, and work for
+              everyone. When I'm not shipping, I'm exploring new tools,
+              contributing to open source, or refining my craft.
+            </p>
+          </div>
+        </SectionHeading>
+
+        <div class="mt-8 flex flex-wrap gap-3" data-reveal>
+          <MotionButton href={withBase("/contact")} label="Work with me" client:visible />
+          <MotionButton href={withBase("/projects")} label="See my work" variant="ghost" client:visible />
+        </div>
+      </div>
+
+      <!-- Portrait / decorative panel -->
+      <div class="relative" data-reveal>
+        <MotionCard className="mx-auto w-full max-w-xs" lift={8} client:visible>
+          <div class="relative aspect-square overflow-hidden rounded-3xl border border-border/70 bg-card">
+            <div class="absolute inset-0" style="background:radial-gradient(120% 120% at 20% 0%, rgba(34,197,94,0.25), transparent 55%), linear-gradient(135deg,#1b2336,#0b1120)"></div>
+            <div class="absolute inset-0 grid place-items-center">
+              <span class="font-mono text-7xl font-extrabold text-foreground/90 animate-float">
+                {site.initials}
+              </span>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 rounded-xl border border-border/60 bg-background/70 p-3 font-mono text-xs text-muted-foreground backdrop-blur">
+              <span class="text-accent">const</span> role =
+              <span class="text-foreground">"{site.role}"</span>;
+            </div>
+          </div>
+        </MotionCard>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="mt-16 grid grid-cols-2 gap-6 rounded-2xl border border-border/70 bg-card/40 p-8 sm:grid-cols-4">
+      {
+        stats.map((s) => (
+          <div data-reveal>
+            <StatCounter value={s.value} label={s.label} client:visible />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="container-page py-20">
+    <SectionHeading eyebrow="Toolkit" title="Skills & technologies">
+      <p class="max-w-lg text-sm leading-relaxed text-muted-foreground">
+        The stack I reach for to build modern, resilient products.
+      </p>
+    </SectionHeading>
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2">
+      {
+        skills.map((s) => (
+          <div data-reveal class="h-full">
+            <MotionCard className="h-full" lift={5} client:visible>
+              <div class="h-full rounded-2xl border border-border/70 bg-card/40 p-6 transition-colors hover:border-border-strong">
+                <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-accent">
+                  <Icon name="code" size={14} />
+                  {s.group}
+                </div>
+                <ul class="mt-4 flex flex-wrap gap-2">
+                  {s.items.map((item) => (
+                    <li class="rounded-lg border border-border/60 bg-muted/50 px-3 py-1.5 font-mono text-sm text-foreground/85">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </MotionCard>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Experience timeline -->
+  <section class="container-page pb-8">
+    <SectionHeading eyebrow="Journey" title="Experience">
+      <p class="max-w-lg text-sm leading-relaxed text-muted-foreground">
+        A quick look at where I've been.
+      </p>
+    </SectionHeading>
+
+    <ol class="mt-10 space-y-4">
+      {
+        timeline.map((item) => (
+          <li data-reveal class="relative sm:pl-8">
+            <span class="absolute left-0 top-6 hidden h-[calc(100%-1.5rem)] w-px bg-border/70 sm:block"></span>
+            <span class="absolute -left-[5px] top-7 hidden h-2.5 w-2.5 rounded-full bg-accent ring-4 ring-background sm:block"></span>
+            <MotionCard lift={4} client:visible>
+              <div class="rounded-2xl border border-border/70 bg-card/40 p-6 transition-colors hover:border-border-strong">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                  <h3 class="text-lg font-bold">{item.role}</h3>
+                  <span class="font-mono text-xs text-accent">{item.period}</span>
+                </div>
+                <p class="mt-0.5 font-mono text-sm text-muted-foreground">{item.org}</p>
+                <p class="mt-3 text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
+              </div>
+            </MotionCard>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</BaseLayout>

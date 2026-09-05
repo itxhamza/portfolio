@@ -1,0 +1,82 @@
+---
+import { site, nav, socials } from "@/data/site";
+import Icon from "@/components/Icon.astro";
+import { withBase } from "@/lib/url";
+const year = new Date().getFullYear();
+const iconFor: Record<string, string> = {
+  GitHub: "github",
+  LinkedIn: "linkedin",
+  Email: "mail",
+};
+---
+<footer class="relative mt-24 border-t border-border/70">
+  <div class="container-page py-14">
+    <div class="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+      <div class="max-w-sm">
+        <a href={withBase("/")} class="flex items-center gap-2.5 font-mono text-base font-semibold">
+          <span class="grid h-8 w-8 place-items-center rounded-lg bg-accent font-bold text-accent-foreground">
+            {site.initials}
+          </span>
+          {site.name}
+        </a>
+        <p class="mt-4 text-sm leading-relaxed text-muted-foreground">
+          {site.description}
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-8 sm:flex-row sm:gap-16">
+        <nav aria-label="Footer">
+          <h3 class="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            Navigate
+          </h3>
+          <ul class="mt-4 space-y-2.5">
+            {
+              nav.map((item) => (
+                <li>
+                  <a
+                    href={withBase(item.href)}
+                    class="link-underline text-sm text-foreground/90 hover:text-foreground"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <div>
+          <h3 class="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            Elsewhere
+          </h3>
+          <ul class="mt-4 space-y-2.5">
+            {
+              socials.map((s) => (
+                <li>
+                  <a
+                    href={s.href}
+                    class="group inline-flex items-center gap-2 text-sm text-foreground/90 hover:text-foreground"
+                    {...s.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {}}
+                  >
+                    <Icon name={iconFor[s.label] ?? "arrow-up-right"} size={16} class="text-muted-foreground transition-colors group-hover:text-accent" />
+                    {s.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col items-center justify-between gap-3 border-t border-border/60 pt-6 sm:flex-row">
+      <p class="font-mono text-xs text-muted-foreground">
+        © {year} {site.name}. Built with Astro & Tailwind.
+      </p>
+      <p class="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+        <span class="inline-block h-2 w-2 rounded-full bg-accent animate-pulse-dot"></span>
+        {site.status}
+      </p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,26 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  align?: "left" | "center";
+}
+const { eyebrow, title, align = "left" } = Astro.props;
+---
+<div
+  class:list={[
+    "flex flex-col gap-3",
+    align === "center" ? "items-center text-center" : "items-start",
+  ]}
+  data-reveal
+>
+  {
+    eyebrow && (
+      <span class="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 font-mono text-xs uppercase tracking-widest text-accent">
+        <span class="h-1.5 w-1.5 rounded-full bg-accent" />
+        {eyebrow}
+      </span>
+    )
+  }
+  <h2 class="text-3xl font-bold sm:text-4xl">{title}</h2>
+  <slot />
+</div>
