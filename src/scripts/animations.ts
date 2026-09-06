@@ -13,15 +13,16 @@ function setup() {
     return;
   }
 
-  // 1) Hero — a small choreographed load-in timeline (GSAP timeline).
+  // 1) Hero — a choreographed load-in: items fade up in sequence (name first,
+  //    then role, tagline, stats, CTAs, scroll cue).
   const hero = document.querySelector("[data-hero]");
   if (hero) {
-    const items = hero.querySelectorAll("[data-hero-item]");
+    const items = hero.querySelectorAll<HTMLElement>("[data-hero-item]");
     if (items.length) {
-      gsap.set(items, { opacity: 0, y: 26 });
+      gsap.set(items, { opacity: 0, y: 24 });
       gsap
         .timeline({ defaults: { ease: "power3.out" } })
-        .to(items, { opacity: 1, y: 0, duration: 0.7, stagger: 0.12, delay: 0.05 });
+        .to(items, { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, delay: 0.05 });
     }
   }
 

@@ -4,8 +4,10 @@ import SectionHeading from "@/components/SectionHeading.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import Icon from "@/components/Icon.astro";
 import MotionButton from "@/components/react/MotionButton.tsx";
+import MagneticButton from "@/components/react/MagneticButton.tsx";
 import MotionCard from "@/components/react/MotionCard.tsx";
 import StatCounter from "@/components/react/StatCounter.tsx";
+import RotatingText from "@/components/react/RotatingText.tsx";
 import { site } from "@/data/site";
 import { featuredProjects } from "@/data/projects";
 import { stats, values } from "@/data/about";
@@ -16,27 +18,46 @@ const marquee = [
   "PostgreSQL", "GraphQL", "Docker", "AWS", "Vue", "Playwright",
 ];
 const valueIcons = ["gauge", "a11y", "sparkles"];
+const roles = ["Full-Stack Developer", "Frontend Engineer", "UI/UX Engineer"];
 ---
 <BaseLayout>
   <!-- ================= HERO ================= -->
-  <section class="relative overflow-hidden">
-    <div class="container-page pb-16 pt-10 sm:pt-16" data-hero>
+  <section class="relative overflow-hidden" data-hero>
+    <!-- pointer-tracking spotlight (desktop, motion-safe) -->
+    <div class="pointer-events-none absolute inset-0 -z-10" data-spotlight aria-hidden="true"></div>
+
+    <div class="container-page pb-14 pt-12 sm:pt-16">
       <div class="mx-auto max-w-3xl text-center">
+        <!-- availability pill -->
         <div
-          class="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-4 py-1.5 font-mono text-xs text-muted-foreground backdrop-blur"
+          class="inline-flex items-center gap-2.5 rounded-full border border-border/70 bg-card/60 px-4 py-1.5 font-mono text-xs text-muted-foreground backdrop-blur"
           data-hero-item
         >
-          <span class="inline-block h-2 w-2 rounded-full bg-accent animate-pulse-dot"></span>
+          <span class="relative flex h-2 w-2">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60"></span>
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-accent"></span>
+          </span>
           {site.status}
+          <span class="h-3 w-px bg-border-strong"></span>
+          <span class="inline-flex items-center gap-1">
+            <Icon name="map-pin" size={12} /> Remote
+          </span>
         </div>
 
-        <h1
-          class="mt-6 text-4xl font-extrabold leading-[1.05] sm:text-6xl md:text-7xl"
-          data-hero-item
-        >
-          <span class="gradient-text">{site.name}</span>
-          <br />
-          <span class="text-foreground/90">{site.role}</span>
+        <!-- headline: name + rotating role (Framer Motion) -->
+        <h1 class="mt-7 leading-[1.03] tracking-tight">
+          <span
+            class="block font-extrabold text-foreground text-[clamp(2.7rem,8.5vw,5rem)]"
+            data-hero-item
+          >
+            Hamza <span class="gradient-text">Javed</span>
+          </span>
+          <span
+            class="mt-3 block pb-[0.12em] font-bold text-[clamp(1.3rem,4vw,2.15rem)]"
+            data-hero-item
+          >
+            <RotatingText words={roles} client:load />
+          </span>
         </h1>
 
         <p
@@ -47,22 +68,41 @@ const valueIcons = ["gauge", "a11y", "sparkles"];
           experiences — fast, accessible, and built to last.
         </p>
 
-        <div
-          class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
+        <!-- credibility stats -->
+        <ul
+          class="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-sm"
           data-hero-item
         >
-          <MotionButton href={withBase("/projects")} label="View my work" variant="primary" full client:load />
-          <MotionButton href={withBase("/contact")} label="Get in touch" variant="ghost" full client:load />
-        </div>
+          <li class="text-muted-foreground"><span class="font-semibold text-foreground">6+</span> years</li>
+          <li aria-hidden="true" class="h-1 w-1 rounded-full bg-border-strong"></li>
+          <li class="text-muted-foreground"><span class="font-semibold text-foreground">40+</span> projects</li>
+          <li aria-hidden="true" class="h-1 w-1 rounded-full bg-border-strong"></li>
+          <li class="text-muted-foreground"><span class="font-semibold text-foreground">20+</span> clients</li>
+        </ul>
 
+        <!-- magnetic CTAs -->
         <div
-          class="mt-6 flex items-center justify-center gap-2 font-mono text-xs text-muted-foreground"
+          class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
           data-hero-item
         >
-          <Icon name="map-pin" size={14} />
-          {site.location}
+          <MagneticButton href={withBase("/projects")} label="View my work" variant="primary" full client:load />
+          <MagneticButton href={withBase("/contact")} label="Get in touch" variant="ghost" full client:load />
         </div>
       </div>
+    </div>
+
+    <!-- scroll cue -->
+    <div class="flex justify-center pb-6" data-hero-item>
+      <a
+        href="#work"
+        aria-label="Scroll to featured work"
+        class="group inline-flex flex-col items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+      >
+        Scroll
+        <span class="flex h-9 w-5 justify-center rounded-full border border-border-strong pt-1.5">
+          <span class="h-1.5 w-1 rounded-full bg-accent animate-scroll-dot"></span>
+        </span>
+      </a>
     </div>
 
     <!-- Tech marquee -->
@@ -87,7 +127,7 @@ const valueIcons = ["gauge", "a11y", "sparkles"];
   </section>
 
   <!-- ================= FEATURED WORK ================= -->
-  <section class="container-page py-20">
+  <section id="work" class="container-page py-20">
     <div class="flex flex-wrap items-end justify-between gap-4">
       <SectionHeading eyebrow="Selected work" title="Featured projects">
         <p class="max-w-md text-sm leading-relaxed text-muted-foreground">
@@ -181,3 +221,41 @@ const valueIcons = ["gauge", "a11y", "sparkles"];
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  [data-spotlight] {
+    background: radial-gradient(
+      520px circle at var(--mx, 50%) var(--my, 20%),
+      rgba(34, 197, 94, 0.14),
+      transparent 45%
+    );
+    opacity: var(--spot, 0);
+    transition: opacity 0.5s ease;
+  }
+</style>
+
+<script>
+  // Pointer-tracking hero spotlight — desktop + motion-safe only.
+  function initSpotlight() {
+    const hero = document.querySelector<HTMLElement>("[data-hero]");
+    const layer = hero?.querySelector<HTMLElement>("[data-spotlight]");
+    if (!hero || !layer) return;
+    if (
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    hero.addEventListener("pointermove", (e) => {
+      const r = hero.getBoundingClientRect();
+      layer.style.setProperty("--mx", `${e.clientX - r.left}px`);
+      layer.style.setProperty("--my", `${e.clientY - r.top}px`);
+      layer.style.setProperty("--spot", "1");
+    });
+    hero.addEventListener("pointerleave", () => {
+      layer.style.setProperty("--spot", "0");
+    });
+  }
+
+  document.addEventListener("astro:page-load", initSpotlight);
+</script>
